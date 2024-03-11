@@ -22,3 +22,9 @@ export interface IContext {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
 }
+
+export interface INavLink {
+  imageURL: string;
+  route: string;
+  label: string;
+}

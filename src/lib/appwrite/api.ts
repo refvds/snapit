@@ -147,3 +147,66 @@ export async function createPost(post: INewPost) {
     console.log(error);
   }
 }
+
+export async function getRecentPosts() {
+  const posts = await database.listDocuments(appwriteConfig.databaseId, appwriteConfig.postCollectionId, [
+    Query.orderDesc('$createdAt'),
+    Query.limit(20),
+  ]);
+
+  if (!posts) throw Error;
+
+  return posts;
+}
+
+export async function likePost(postId: string, likesArray: string[]) {
+  try {
+    const updatedPost = await database.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        likes: likesArray,
+      }
+    );
+
+    if (!updatedPost) throw Error;
+    return updatedPost;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function savePost(postId: string, userId: string) {
+  try {
+    const updatedPost = await database.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      ID.unique(),
+      {
+        user: userId,
+        post: postId,
+      }
+    );
+
+    if (!updatedPost) throw Error;
+    return updatedPost;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function removeSavedPost(savedId: string) {
+  try {
+    const statusCode = await database.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      savedId
+    );
+
+    if (!statusCode) throw Error;
+    return { status: 'ok' };
+  } catch (error) {
+    console.log(error);
+  }
+}

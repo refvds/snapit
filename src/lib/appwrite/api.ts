@@ -293,3 +293,20 @@ export async function deletePost(postId?: string, imageID?: string) {
     console.log(error);
   }
 }
+
+export async function getUserPosts(userID?: string) {
+  if (!userID) return;
+
+  try {
+    const post = await database.listDocuments(appwriteConfig.databaseId, appwriteConfig.postCollectionId, [
+      Query.equal('author', userID),
+      Query.orderDesc('$createdAt'),
+    ]);
+
+    if (!post) throw Error;
+
+    return post;
+  } catch (error) {
+    console.log(error);
+  }
+}
